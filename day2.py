@@ -7,7 +7,7 @@ def is_safe(line):
 
 ### PART 1
 count = 0
-with open('input.txt', 'r') as f:
+with open('input2.txt', 'r') as f:
     for line in f:
         line = list(map(int, line.strip().split(' ')))
 
@@ -17,11 +17,11 @@ with open('input.txt', 'r') as f:
 
 print(f"Part 1: {count}")
 
- 
+
 ### PART 2
 count = 0
 
-with open('input.txt', 'r') as f:
+with open('input2.txt', 'r') as f:
     for line in f:
         line = list(map(int, line.strip().split(' ')))
 
