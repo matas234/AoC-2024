@@ -1,16 +1,25 @@
 
-
-
-
 import re
-import time
 
 
-start = time.time()
-
-string = open('input.txt', 'r').read()
+string = open('input3.txt', 'r').read()
 
 
+### PART 1
+pattern = r"mul\((\d{1,3}),(\d{1,3})\)"
+match_iter = re.finditer(pattern, string)
+
+out = 0
+
+for match in match_iter:
+    out += int(match.group(1)) * int(match.group(2))
+
+print(f"Part 1: {out}")
+
+
+
+
+### PART 2
 pattern = r"do\(\)|don't\(\)|mul\((\d{1,3}),(\d{1,3})\)"
 match_iter = re.finditer(pattern, string)
 
@@ -27,5 +36,5 @@ for match in match_iter:
     elif is_enabled:
         out += int(match.group(1)) * int(match.group(2))
 
-print(time.time() - start)
-print(out)
+
+print(f"Part 2: {out}")
