@@ -19,6 +19,7 @@ print(f"Part 1: {out}")
 
 
 
+
 ### PART 2
 pattern = r"do\(\)|don't\(\)|mul\((\d{1,3}),(\d{1,3})\)"
 match_iter = re.finditer(pattern, string)
