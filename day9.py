@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import Counter, defaultdict, deque
 import time
 
 
@@ -7,8 +7,6 @@ with open('input9.txt', 'r') as f:
 
 
 def part1():
-    files, empty = [], []
-
     cur_id = 0
     is_file = True
 
@@ -29,8 +27,9 @@ def part1():
 
     file_ptr = len(formated) - 1
     empty_ptr = 0
+    len_formated = len(formated)
 
-    while (file_ptr >= 0 and empty_ptr < len(formated)) and empty_ptr < file_ptr:
+    while (file_ptr >= 0 and empty_ptr < len_formated) and empty_ptr < file_ptr:
         if formated[file_ptr] == '.':
             file_ptr -= 1
             continue
@@ -45,76 +44,84 @@ def part1():
         formated[empty_ptr] = idx_to_move
 
 
-    out = 0
+    checksum = 0
     for idx, id in enumerate(formated):
         if id == '.':
             break
 
-        out += id * idx
+        checksum += id * idx
 
 
-    return out
+    return checksum
 
-
+start = time.time()
 print(f"Part 1: {part1()}")
+print(f"Time: {time.time() - start}")
+
+
+
+def get_formatted():
+    cur_id, ptr = 0, 0;  is_file = True;  formated = []
+
+    for num in data:
+        num = int(num)
+        if is_file:
+            formated.append((cur_id, num))
+            cur_id += 1
+        else:
+            formated.append(num)
+
+        ptr += num
+        is_file = not is_file
+
+
+    return formated
 
 
 
 def part2():
-    cur_id = 0
-    is_file = True
-
-    formated = []
-    ptr = 0
-
-    for num in data:
-        if is_file:
-            formated += [[cur_id] * int(num)]
-            cur_id += 1
-
-        else:
-            formated += [['.'] * int(num)]
-
-        ptr += int(num)
-        is_file = not is_file
-
+    # alternating list of tuple, int, tuple, ...
+    # where tuple = (id, len) which denotes information about a file
+    # and int is the length of the empty space
+    formated = get_formatted()
 
     file_idx = len(formated) - 1
 
     while file_idx > 0:
-        file = formated[file_idx]
-        empty_idx = 1
+        cur_id, file_len = formated[file_idx]
 
-        while empty_idx < file_idx:
+        for empty_idx in range(1, file_idx, 2):
 
-            if len(formated[empty_idx]) >= len(file):
-                formated[empty_idx] = formated[empty_idx][: -len(file)]
-                formated[file_idx] = ['.'] * len(file)
+            if formated[empty_idx] >= file_len:
 
-                formated.insert(empty_idx, file)
-                formated.insert(empty_idx, [])
+                formated[empty_idx] -= file_len
+                formated[file_idx] = (0, file_len)
 
-                file_idx += 2
-
+                formated.insert(empty_idx, (cur_id, file_len))
+                formated.insert(empty_idx, 0)
+                ## 2 values got inserted before file_idx, so not increasing file_idx is the same
+                ## as decreasing it by 2 in the old list (going to the next file)
                 break
 
-            empty_idx += 2
+        else:
+            # nothing happened so go to the next file
+            file_idx -= 2
 
-        file_idx -= 2
 
-
-    out, idx = 0, 0
+    checksum, idx = 0, 0
     for file_idx, file in enumerate(formated):
-        l = len(file)
 
-        if file_idx % 2 == 0 and l and file[0] != '.':
-            v = file[0]
+        if file_idx % 2 == 0:
+            cur_id, file_len = file
 
-            out += v * l * (2 * idx + l - 1) // 2
+            ## formula is for cur_id * (sum of consecutive numbers form idx to (idx + file_len - 1 ))
+            checksum += cur_id * file_len * (2*idx + file_len - 1) // 2
+            idx += file_len
 
-        idx += l
+        else:
+            idx += file
 
-    return out
+    return checksum
 
 
 
