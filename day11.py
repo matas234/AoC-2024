@@ -1,7 +1,8 @@
 from collections import Counter
+import time
 
 with open('input11.txt', 'r') as f:
-    stones = Counter(map(int,f.read().strip().split(' ')))
+    stones = Counter(map(int, f.read().strip().split(' ')))
 
 
 def grow_stones(num_of_blinks):
@@ -27,5 +28,10 @@ def grow_stones(num_of_blinks):
 
     return sum(cur_stones.values())
 
-print(f"Part 1: {grow_stones(25)}")
-print(f"Part 2: {grow_stones(75)}")
+start = time.time()
+print(f"Part 1: {grow_stones(25)}")  # 194_782
+print(f"Time: {time.time() - start}")
+
+start = time.time()
+print(f"Part 2: {grow_stones(75)}")  # 233_007_586_663_131
+print(f"Time: {time.time() - start}")
